@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<script type="text/javascript" src="point.js"></script>
+</head>
+<body>
+	<script type="text/javascript">
+
+		var W = 600, H = 400;
+		var pjs = new PointJS("2d", W, H, {
+		  backgroundColor : "#CCCCCC"
+		});
+
+		
+		var game = pjs.game;
+		var brush = pjs.brush;
+		var mouse = pjs.mouseControl.initMouseControl();
+		var p = pjs.vector.point;
+		var size = pjs.vector.size;
+		var cam = pjs.camera;
+		var key = pjs.keyControl.initKeyControl();
+
+		var rect = game.newRectObject({
+     			x: W/2-25, y: H/2-25,
+     			//x1: rectW+rectW*x, y1: 12*rectH+rectH*y,
+     			w: 50 , h: 50,
+     			fillColor: "#fff",
+     			//prov: false,
+     		});
+		var bg = game.newRectObject({
+     			x: 0, y: 0,
+     			//x1: rectW+rectW*x, y1: 12*rectH+rectH*y,
+     			w: W , h: H,
+     			fillColor: "#000",
+     			//prov: false,
+     		});
+
+		game.newLoop("game", function () {
+     		game.clear();
+     		bg.draw();
+     		cam.setPositionC(p(rect.x+25, rect.y+25));
+     		//console.log(rect.getDynamicBox());
+     		if(key.isDown("LEFT")){
+     			rect.x -= 1;
+     		}
+     		else if(key.isDown("RIGHT")){
+     			rect.x += 1;
+     		}
+     		else if(key.isDown("UP")){
+     			rect.y -= 1;
+     		}
+     		else if(key.isDown("DOWN")){
+     			rect.y += 1;
+     		}
+     		rect.draw();
+		});
+
+		game.startLoop('game');
+
+	</script>
+</body>
+</html>
