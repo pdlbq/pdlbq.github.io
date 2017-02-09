@@ -119,17 +119,17 @@ ctx.drawImage(pap, -100,0,1150,canvas.height);
         }
         ctx.moveTo(tx[0] - canvas.offsetLeft, ty[0] - canvas.offsetTop);
 var img = new Image();      // Новый объект
-  img.onload = function() { // Событие которое будет исполнено в момент когда изображение будет загружено
-    /*
-    Какие-либо действия
-  */
-   go();
-}
 img.src = 'BrowserPreview_tmp.png'; 
 var fon = new Image();
 fon.src = '356626-admin.jpg';
 var pap = new Image();
 pap.src = 'scroll_old_paper_38.png';
+  pap.onload = function() { // Событие которое будет исполнено в момент когда изображение будет загружено
+    /*
+    Какие-либо действия
+  */
+   go();
+}
 
 
        
