@@ -1,1 +1,267 @@
-ok
+<!doctype html>
+<html>
+<head>
+<style type="text/css">
+	body{
+		background: #000;
+	}
+	#canvas{
+		background: #fff;
+		display: block;
+		margin: 50px auto;
+	}
+</style>
+<script type="text/javascript">
+
+	var Game = function(canvas){
+		var canvas = document.getElementById(canvas);
+		var ctx = canvas.getContext('2d');
+
+		var gameSize = {
+			x:canvas.width,
+			y:canvas.height
+		};
+
+		this.bodies = createBot(this).concat([new Player(this, gameSize)]);
+		//console.log(this.bodies);
+
+		var self = this;
+			var tick = function(){
+				self.update(gameSize);
+				self.draw(ctx, gameSize);
+				requestAnimationFrame(tick);
+			}
+		tick();		
+	}
+	Game.prototype = {
+		update: function(gameSize){
+
+			var bodies = this.bodies;
+
+			var stolc = function(b1){
+				return bodies.filter(function(b2){
+					return colliding(b1, b2);
+				}).length == 0;
+			}
+			this.bodies = this.bodies.filter(stolc);
+
+		//	console.log(this.bodies.length);
+			for(var i=0; i<this.bodies.length; i++){
+				if(this.bodies[i].position.y < 0 || this.bodies[i].position.y > 500 || this.bodies[i].position.x < 0 || this.bodies[i].position.x > 500){
+					this.bodies.splice(i,1);
+				}
+			}
+			for(var i=0; i<this.bodies.length; i++){
+				this.bodies[i].update();
+			}
+		},
+		draw: function(ctx, gameSize){
+			clearRect(ctx,gameSize);
+			for(var i=0; i<this.bodies.length; i++){
+				drawRect(ctx, this.bodies[i]);
+			}
+		},
+		addBodies: function(body){
+			this.bodies.push(body);
+		}
+
+	}
+
+	var Player = function(game, gameSize){
+		this.game = game;
+		this.size = {width: 16, height:16};
+		this.position = {x: gameSize.x/2-this.size.width/2, y: gameSize.y/2-this.size.height/2};
+		
+		//this.otstup = -2;
+		this.rot ={x:this.size.width/2-3/2,y:-4};
+		this.bulXY = {x: this.position.x+this.size.width/2+this.rot.x, y: this.position.y+this.rot.y};
+		this.bulVel = {x: 0, y: -6};
+		this.bullets = 0;
+		this.timer = 0;
+
+		this.Keypress = new Keypress();
+	}
+	Player.prototype = {
+		update: function(){
+
+			if(this.position.x <= 2)
+				this.position.x = 2;
+			if(this.position.x >= 480)
+				this.position.x = 480;
+			if(this.position.y <= 2)
+				this.position.y = 2;
+			if(this.position.y >= 480)
+				this.position.y = 480;
+
+			this.bulXY = {x: this.position.x+this.rot.x, y: this.position.y+this.rot.y};
+			// this.bulVel = {x: 0, y: -6};
+			if(this.Keypress.isDown(this.Keypress.Keys.LEFT)){
+				this.position.x -= 1.5;
+				this.rot = {x:-4,y:this.size.height/2-3/2};
+				this.bulXY = {x: this.position.x+this.rot.x, y: this.position.y+this.rot.y};
+				this.bulVel = {x: -6, y: 0};
+
+			}
+			else if(this.Keypress.isDown(this.Keypress.Keys.RIGHT)){
+				this.position.x += 1.5;
+				this.rot = {x:this.size.width+4,y:this.size.height/2-3/2};
+				this.bulXY = {x: this.position.x+this.rot.x, y: this.position.y+this.rot.y};
+				this.bulVel = {x: 6, y: 0};
+			}
+
+			else if(this.Keypress.isDown(this.Keypress.Keys.DOWN)){
+				this.position.y += 1.5;
+				this.rot = {x:this.size.width/2-3/2,y:4+this.size.height};
+				this.bulXY = {x: this.position.x+this.rot.x, y: this.position.y+this.rot.y};
+				this.bulVel = {x: 0, y: 6};
+			}
+			else if(this.Keypress.isDown(this.Keypress.Keys.UP)){
+				this.position.y -= 1.5;
+				this.rot = {x:this.size.width/2-3/2,y:-4};
+				this.bulXY = {x: this.position.x+this.rot.x, y: this.position.y+this.rot.y};
+				this.bulVel = {x: 0, y: -6};
+			}
+			if(this.Keypress.isDown(this.Keypress.Keys.SPACE)){
+				//console.log('qq');
+				if(this.bullets < 1){
+					//console.log(this.bulVel);
+					var bullet = new Bullet(this.bulXY,this.bulVel); 
+					this.game.addBodies(bullet);
+					this.bullets++;
+
+				}
+				this.timer++;
+			}
+			// else{
+			// 	this.bullets = 0;
+			// 	this.timer = 0;
+			// }
+			
+			
+			if(this.timer == 50){
+				this.bullets = 0;
+				this.timer = 0;
+			}
+		}
+	}
+
+	var Bot = function(game, position){
+		this.game = game;
+		this.size = {width: 16, height:16};
+		this.position = position;
+		this.prov = {x:0, y:0};
+		this.povorot = 0;
+		this.speed = {x:0, y:0};
+		this.tim = 0;
+	}
+
+	Bot.prototype = {
+		update: function(){
+			// if(this.prov < 0 || this.prov > 400){
+			// 	this.speed = -this.speed;
+			// }
+			//console.log(this.position.x);	
+
+			if(this.position.x <= 4)
+				this.position.x=4;
+			if(this.position.x >= 480)
+				this.position.x=480;
+			if(this.position.y <= 4)
+				this.position.y=4;
+			if(this.position.y >= 480)
+				this.position.y=480;
+			
+			this.tim++;
+			if(this.tim == 15){
+				this.prov = Math.floor(Math.random()*4);
+				if(this.prov == 0){
+					this.speed = {x:0,y:3};
+				}
+				else if(this.prov == 1){
+					this.speed = {x:0,y:-3};
+				}
+				else if(this.prov == 2){
+					this.speed = {x:3,y:0};
+				}	
+				else if(this.prov == 3){
+					this.speed = {x:-3,y:0};
+				}
+				this.tim=0;
+			}
+			this.position.x += this.speed.x;
+			this.position.y += this.speed.y;
+			//this.prov += this.speed*2;
+		}
+	}
+
+	var Bullet = function(position, velocity){
+		this.size = {width: 3, height: 3};
+		this.position = position;
+		this.velocity = velocity;
+	}
+	Bullet.prototype = {
+		update: function(){
+			this.position.x += this.velocity.x;
+			this.position.y += this.velocity.y;
+		}
+	}
+
+
+
+	var Keypress = function(){
+		var keyState = {};
+
+		window.onkeydown = function(e){
+			keyState[e.keyCode] = true;
+		}
+		window.onkeyup = function(e){
+			keyState[e.keyCode] = false;
+		}
+		this.isDown = function(keyCode){
+			return keyState[keyCode] === true;
+		}
+		this.Keys = {
+			LEFT: 37,
+			RIGHT: 39,
+			DOWN: 40,
+			UP: 38,
+			SPACE: 32
+		}
+	}
+
+	var createBot = function(game){
+		var bots = [];
+			for(var i = 0; i < 10; i++){
+			var x = 25*i + 60;
+			var y = 20*i + 20;
+
+			bots.push(new Bot(game,{x:x,y:y}));
+		}
+		return bots;
+	}
+
+	var colliding = function(b1, b2){
+		return !(b1 == b2 || 
+			b1.position.x + b1.size.width/2 < b2.position.x - b2.size.width/2 || 
+			b1.position.y + b1.size.height/2 < b2.position.y - b2.size.height/2 || 
+			b1.position.x - b1.size.width/2 > b2.position.x + b2.size.width/2 || 
+			b1.position.y - b1.size.height/2 > b2.position.y + b2.size.height/2);
+	}
+
+	var drawRect = function(ctx,body){
+		ctx.fillRect(body.position.x, body.position.y,body.size.width,body.size.height);
+	}
+
+	var clearRect = function(ctx,gameSize){
+		ctx.clearRect(0,0,gameSize.x,gameSize.y);
+	}
+
+	window.onload = function(){
+		new Game('canvas');
+	}
+</script>
+</head>
+<body>
+	<canvas id="canvas" width="500px" height="500px"></canvas>
+</body>
+</html>
