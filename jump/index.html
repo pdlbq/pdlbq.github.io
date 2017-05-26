@@ -1,0 +1,219 @@
+<!doctype html>
+<html>
+	<head>
+		<title>canvasExample</title>
+        <meta charset='utf-8' />
+<style>body{ pading: 0; margin: 0; background: #3c3c3c}
+	canvas {border: 1px #000 solid; background: #CCC; 
+
+}
+</style>
+<script type="text/javascript">
+			(function() {
+    var pressedKeys = {};
+
+    function setKey(event, status) {
+        var code = event.keyCode;
+        var key;
+
+        switch(code) {
+        case 32:
+            key = 'SPACE'; break;
+        case 37:
+            key = 'LEFT'; break;
+        case 38:
+            key = 'UP'; break;
+        case 39:
+            key = 'RIGHT'; break;
+        case 40:
+            key = 'DOWN'; break;
+        default:
+            // Convert ASCII codes to letters
+            key = String.fromCharCode(code);
+        }
+
+        pressedKeys[key] = status;
+    }
+
+    document.addEventListener('keydown', function(e) {
+        setKey(e, true);
+    });
+
+    document.addEventListener('keyup', function(e) {
+        setKey(e, false);
+    });
+
+    window.addEventListener('blur', function() {
+        pressedKeys = {};
+    });
+
+    window.input = {
+        isDown: function(key) {
+            return pressedKeys[key.toUpperCase()];
+        }
+    };
+})();
+		</script>
+	</head>
+	<body>
+		<canvas  height='400' width='600' id='example'>Îáíîâèòå áðàóçåð</canvas>
+
+		<script>
+			var example = document.getElementById("example"),
+			    ctx     = example.getContext('2d');
+			ctx.fillStyle = "rgba(100,100,100,1)";
+			//ctx.fillRect(0, 0, example.width, example.height);
+
+			//var game = true;
+
+			var W = example.width;
+			var H = example.height;
+
+			var X = 40;
+			var Y = 40;
+
+			var map = [
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0], 
+						[1,1,1,1,0,1,0,1,1,1,0]
+						];
+		
+
+			var t = 0;
+			//console.log(map[0].length);
+
+
+	var onGround = false;
+    Player = function(){
+    	this.posX = 2*X;
+    	this.posY = 8*Y;
+    	this.speed = 1;
+    	this.dy = 0;
+    };
+    Player.prototype.draw = function(){
+    	ctx.fillRect(this.posX, this.posY, X, Y);
+    }
+    Player.prototype.update = function(){
+    	if(!onGround){
+    		this.posY += this.speed;
+    	}
+    	if(this.posY+Y >= 9*Y){
+    		onGround = true;
+    	}  
+    }
+
+		Map = function(){
+			this.t = 0;
+			//console.log(t);
+			
+		};
+
+		Map.prototype.update = function(){
+			this.t--;
+
+		};
+
+		Map.prototype.draw= function(){
+			for(var i = 0; i < map.length; i++){
+				for(var j = 0; j < map[0].length; j++){
+					if(map[i][j] == 1){
+						ctx.fillRect(j*X+this.t, i*Y, X, Y);
+					}
+				}	
+			}
+		};
+
+    var player = new Player();
+    var map1 = new Map();
+		
+
+		
+		clr = function(){
+			ctx.clearRect(0,0,W,H); 
+		}
+		
+example.onmousedown = function (e) {
+	
+};
+	//setInterval(game, 500);
+game = function(){
+
+			clr();
+			map1.update();
+			map1.draw();
+			player.draw();
+			player.update();
+		}
+gameLoop = function(){
+	game();
+	requestAnimationFrame(gameLoop);
+};
+gameLoop();
+/*example.onmousedown = function (e) {
+    var x = e.pageX;
+    var y = e.pageY;
+	if(e.which == 3)
+	button = false;
+    var div = document.getElementById("qq");
+    div.innerHTML = "x: " + x + " y: " + y;
+	ok = true;
+draw(x,y);
+    };
+example.onmousemove= function (e) {
+    var x = e.pageX;
+    var y = e.pageY;
+    var div = document.getElementById("qq");
+if(ok){
+    div.innerHTML = "x: " + x + " y: " + y;
+draw(x,y);	
+}    
+};
+example.onmouseup= function (e) {
+	ok = false;
+	button = true;
+}
+
+draw = function(x, y){
+var v = document.getElementById("ww").value;
+if(v == 1)
+	ctx.fillStyle = "rgba(254,0,0,1)"
+else if(v == 2)
+	ctx.fillStyle = "rgba(0,254,0,1)"
+else if(v == 3)
+	ctx.fillStyle = "rgba(0,0,254,1)"
+else if(v == 4)
+	ctx.fillStyle = "rgba(0,0,0,1)"
+else if(v == 5)
+	ctx.fillStyle = "rgba(254,254,254,1)"
+else if(v == 6)
+	ctx.fillStyle = "rgba(150,150,150,1)"
+if(button){
+	if(x > W/2){
+		var nX = x-W/2;
+		var nY = H/2-y;
+		ctx.fillRect(W/2-nX, y, 2, 2);
+		ctx.fillRect(x, H/2+nY, 2, 2);
+		ctx.fillRect(W/2-nX, H/2+nY, 2, 2);
+		
+	}
+	else if(x < W/2){
+		var nX = W/2-x;
+		var nY = H/2-y;
+		ctx.fillRect(W/2+nX, y, 2, 2);
+		ctx.fillRect(x, H/2+nY, 2, 2);
+		ctx.fillRect(W/2+nX, H/2+nY, 2, 2);
+	}
+}
+	ctx.fillRect(x, y, 2, 2);
+
+}*/
+		</script>
+	</body>
+</html>
