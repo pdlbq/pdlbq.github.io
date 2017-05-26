@@ -1,0 +1,217 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Генератор лабиринта</title>
+		<meta charset='utf-8' />
+		<style>body{ pading: 0; margin: 0; background: #3c3c3c}
+			canvas {border: 1px #000 solid; background: #CCC; 
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+		window.requestAnimFrame = (function(){
+      	return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    		})();
+    		///////////////////////////////////////////////////////////
+			var canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
+			canvas.width = 615;
+			canvas.height = 615;
+			document.body.appendChild(canvas);
+
+			var X = 123;
+			var Y = 123;
+
+			var h = 5, w = 5;
+
+			var VISITED = true;
+			var cell = 1;
+			var wall = 0;
+			var start = 2;
+			var finish = 3;
+			var mas = [];
+			var masVis = [];
+			for (var i = 0; i < Y; i++){
+	    		mas[i] = [];
+	    		masVis[i] = [];
+	    		for (var j = 0; j < X; j++){
+	        		if((i%2 != 0 && j%2 != 0) && (i < Y-1 && j < X-1)){
+	    				mas[i][j] = cell;
+	    				masVis[i][j] = false;
+	    			}
+	    			else{
+	    				mas[i][j] = wall;
+	    				masVis[i][j] = false;
+					}
+				}
+			}
+			
+
+			
+
+			var startCell = {
+				x: 1,
+				y: 1
+			};
+			var curentCell = startCell;
+			var neighbourCell = {};
+			var startPoint = [];
+			var t = 0;
+			var r = true;
+			mas[startCell.x][startCell.y] = start;
+			getNeighbours = function(){
+				var dist = 2;
+				
+				var up = {x:curentCell.x, y:curentCell.y-dist};
+				var rt = {x:curentCell.x+dist, y:curentCell.y};
+				var dw = {x:curentCell.x, y:curentCell.y+dist};
+				var lt = {x:curentCell.x-dist, y:curentCell.y};
+
+				var d = [up, rt, dw, lt];
+				var dOk = [];
+				var size = 0;
+				
+				for(var i = 0; i < 4; i++){
+					
+					if(d[i].x > 0 && d[i].x < X && d[i].y > 0 && d[i].y < Y && masVis[d[i].x][d[i].y] != VISITED){
+						dOk[size] = d[i];
+						size++;
+						
+					}
+				}
+				return dOk;
+			}
+			removeWall = function(first, second){
+				var xDiff = second.x - first.x;
+    			var yDiff = second.y - first.y;
+
+    			var addX, addY;
+
+			    addX = (xDiff != 0) ? (xDiff / Math.abs(xDiff)) : 0;
+			    addY = (yDiff != 0) ? (yDiff / Math.abs(yDiff)) : 0;
+
+			    mas[first.x + addX][first.y + addY] = cell;
+			}
+
+			do{
+				var Neighbours = getNeighbours();
+				//console.log(Neighbours);
+				if(Neighbours.length != 0){
+					var randNum = Math.floor((Math.random() * Neighbours.length));
+					neighbourCell = Neighbours[randNum];
+					
+					startPoint.push(curentCell);
+					
+					removeWall(curentCell, neighbourCell);
+					masVis[curentCell.x][curentCell.y] = VISITED;
+					curentCell = neighbourCell;
+					masVis[curentCell.x][curentCell.y] = VISITED;
+					
+				}
+				else {
+					t++;
+					if(r && t > 15){
+						mas[curentCell.x][curentCell.y] = finish;
+						r = false;
+					}
+					curentCell = startPoint.pop();
+						
+				}
+			}while(startPoint.length != 0)
+
+			
+
+
+	    	render = function(){
+	    		for (var i = 0; i < Y; i++){
+		    		for (var j = 0; j < X; j++){
+		    			if(mas[i][j] == cell){
+		    				ctx.fillStyle="rgba(244,244,244,1)"
+		    				ctx.fillRect(j*w, i*h, w, h);
+		    			}
+		    			else if(mas[i][j] == wall){
+		    				ctx.fillStyle="rgba(0,0,0,1)"
+		    				ctx.fillRect(j*w, i*h, w, h);
+		    			}
+		    			else if(mas[i][j] == start){
+							ctx.fillStyle="rgba(0,244,0,1)"
+		    				ctx.fillRect(j*w, i*h, w, h);
+		    			}
+		    			else if(mas[i][j] == finish){
+		    				ctx.fillStyle="rgba(244,0,0,1)"
+		    				ctx.fillRect(j*w, i*h, w, h);
+		    			}
+		    		}
+		    	}
+	    	}
+
+	    	Player = function(startCell){
+	    		this.pos = {x: startCell.x, y: startCell.y};
+	    	}
+	    	Player.prototype.update = function(newPos){
+	    		if(mas[this.pos.x + newPos.x][this.pos.y + newPos.y] == cell){
+	    			var temp = this.pos;
+		    		mas[temp.x][temp.y] = cell;
+		    		this.pos.x += newPos.x;
+		    		this.pos.y += newPos.y;
+		    		mas[this.pos.x][this.pos.y] = start;
+	    		}
+	    		else if(mas[this.pos.x + newPos.x][this.pos.y + newPos.y] == finish){
+	    			alert("You win!");
+	    			location.reload();
+	    		}
+	    		
+	    	}
+
+	    	clr = function(){
+				ctx.clearRect(0,0,canvas.width,canvas.height); 
+			}
+
+			processKey = function(e) {
+			
+				var newPos = {x: 0, y: 0};
+				  // Если нажата стрелка вверх, начинаем двигаться вверх
+				  if (e.keyCode == 38) {
+				    newPos = {x: -1, y: 0};
+				  }
+
+				  // Если нажата стрелка вниз, начинаем двигаться вниз
+				  if (e.keyCode == 40) {
+				    newPos = {x: 1, y: 0};
+				  }
+
+				  // Если нажата стрелка влево, начинаем двигаться влево
+				  if (e.keyCode == 37) {
+				    newPos = {x: 0, y: -1};
+				  }
+
+				  // Если нажата стрелка вправо, начинаем двигаться вправо
+				  if (e.keyCode == 39) {
+				    newPos = {x: 0, y: 1};
+				  }
+				  player.update(newPos);
+				}
+				window.onkeydown = processKey;
+
+	    	function main() {
+
+			    clr();
+			    //update();
+			    render();
+			    requestAnimFrame(main);
+			};
+			var player = new Player(startCell);
+			main();
+
+
+		</script>
+	</body>
+</html>
