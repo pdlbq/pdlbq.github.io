@@ -1,0 +1,209 @@
+<!doctype html>
+<html>
+	<head>
+		<title>Game</title>
+		<meta charset='utf-8' />
+		<style>body{ pading: 0; margin: 0; background: #3c3c3c}
+			canvas {border: 1px #000 solid; background: #CCC; 
+			}
+		</style>
+	</head>
+	<body>
+		<script>
+		window.requestAnimFrame = (function(){
+      return  window.requestAnimationFrame       || 
+              window.webkitRequestAnimationFrame || 
+              window.mozRequestAnimationFrame    || 
+              window.oRequestAnimationFrame      || 
+              window.msRequestAnimationFrame     || 
+              function(/* function */ callback, /* DOMElement */ element){
+                window.setTimeout(callback, 1000 / 60);
+              };
+    })();
+			var canvas = document.createElement("canvas");
+			var ctx = canvas.getContext("2d");
+			canvas.width = 600;
+			canvas.height = 400;
+			document.body.appendChild(canvas);
+
+
+			var X = 40;
+			var Y = 40;
+
+			
+
+			var map = [
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0], 
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+						[0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0]
+						];
+
+			var t = 10;
+			for(var i = 0; i < 12; i++){
+				for(var j = 0; j < 150; j++){
+					if(i == 9  && j > 140){
+						map[i][j] = 3;
+					}
+					else if(i == 9){
+						map[i][j] = 1;
+						if(t == 0)
+							t = Math.floor(Math.random() * (10 - 5 + 1)) + 5;
+						t--;
+						if(t == 0){
+							map[i][j] = 2;
+						}
+					}
+					else{
+						map[i][j] = 0;
+					}
+				}
+			}
+
+			Player = function(){
+				this.pos = [2*X, 7*Y];
+				this.posX = 2*X;
+				//this.speed = 100;
+				this.score = 0;
+				this.dy = 0;
+				this.ground = false;
+			};
+			Player.prototype.update = function(dt) {
+				//this.pos[0] += (this.speed * dt);
+				//console.log(this.pos[0]);
+
+				if(!this.ground){
+					this.dy += 700*dt;
+				}
+				this.pos[1] += this.dy*dt;
+				//console.log(this.pos[1]);
+				//this.ground = false;
+				colision();
+				this.score+=0.5;
+
+			};
+			Player.prototype.draw = function(){
+				ctx.fillRect(this.posX, this.pos[1], X, Y);
+				ctx.fillText(this.score, 20, 50);
+			}
+
+			Mapa = function(){
+				this.pos = 0;
+				this.speed = 100;
+			};
+			Mapa.prototype.update = function(dt){
+				this.pos -= this.speed*dt;
+				player.pos[0] += this.speed*dt;
+				this.speed += 0.5;
+			};
+			Mapa.prototype.draw = function(){
+				for(var i = 0; i < map.length; i++){
+					for(var j = 0; j < map[0].length; j++){
+						if(map[i][j] == 1){
+							//ctx.fillStyle="rgba(0,0,0,1)";
+							//ctx.fillRect(this.pos+j*X, i*Y, X, Y);
+							ctx.drawImage(img, j*X+this.pos, i*Y);
+						}
+						else if(map[i][j] == 2){
+							//ctx.fillStyle="rgba(0,240,0,1)";
+							//ctx.fillRect(this.pos+j*X, i*Y, X, Y);
+							ctx.drawImage(lava, j*X+this.pos, i*Y);
+						}
+						else if(map[i][j] == 3){
+							
+							ctx.fillRect(this.pos+j*X, i*Y, X, Y);
+							
+						}
+					}	
+				}
+			}
+
+			colision = function(){
+				for (var i = parseInt(player.pos[1]/Y); i<=(parseInt(player.pos[1]+Y)/Y); i++){
+	  				for (var j = parseInt(player.pos[0]/X); j<=(parseInt(player.pos[0]+X)/X); j++){
+	  					//console.log(i);
+
+	  	 				if (map[i][j]==1){ 
+	        				//if ((!player.ground) && (player.pos[0]*X > j*X)) alert("game over"); 
+		    				//if ((dx<0) && (dir==0)) rect.left =  j*32 + 32;
+		    				//if ((!player.ground) && ((player.pos[1]+Y) > i*Y + 20)) alert("game over");
+		    				//if(player.pos[0] + X > j*X && player.pos[1] + Y > i*Y+Y && dir == 0) alert("game over"); 
+						    if ((player.dy>0) && player.pos[1] < i*Y+Y) {player.pos[1] = i*Y - Y;  player.dy = 0;   player.ground=true;}
+						   	//else alert("game over");
+							//if (dy<0)  { player.pos[1] = j*Y + Y;   dy=0;}
+			   			}
+			   			else if(map[i][j] == 2){
+			   				alert("Game over! Score = "+player.score);
+			   			}
+			   			else if(map[i][j] == 3){
+			   				alert("You win! Score = "+player.score);
+			   			}
+			   			else{
+
+			   				player.ground = false;
+			   			}
+	         	
+    				}
+   
+	  		 	}
+			};
+			
+		clr = function(){
+			ctx.clearRect(0,0,canvas.width,canvas.height); 
+		}
+
+						// Цикл игры
+			var lastTime;
+			function main() {
+			    var now = Date.now();
+			    var dt = (now - lastTime) / 1000.0;
+			    //console.log(dt);
+			    clr();
+			    update(dt);
+			    render();
+				console.log(map[9][61]);
+				
+					canvas.onmousedown = function (e) {
+						if(player.dy == 0){
+						player.dy = -300;
+						player.ground = false;
+						}		
+					};
+				
+			    lastTime = now;
+			    requestAnimFrame(main);
+			};
+			update = function(dt){
+				player.update(dt);
+				mapa.update(dt);
+			}
+		
+			render = function(){
+				player.draw();
+				mapa.draw();
+			};
+
+			var player = new Player();
+			var mapa = new Mapa();
+			var lava = new Image();
+			lava.src = 'lava.png';
+			var img = new Image();
+			img.onload = function() {
+				lastTime = Date.now();
+			    main();
+			};
+			img.src = 'ground.jpg';
+		//	lastTime = Date.now();
+		//    main();
+		
+		</script>
+	</body>
+</html>
