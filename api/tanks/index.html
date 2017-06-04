@@ -25,7 +25,41 @@
 			canvas.height = 615;
 			document.body.appendChild(canvas);
       canvas.style.border = "1px solid #000";
-      
+
+
+
+	clr = function(){
+				ctx.clearRect(0,0,canvas.width,canvas.height); 
+			}
+			processKey = function(e) {
+			
+				var newPos = {x: 0, y: 0};
+				  // Если нажата стрелка вверх, начинаем двигаться вверх
+				  if (e.keyCode == 38) {
+				    newPos = {x: -1, y: 0};
+				  }
+				  // Если нажата стрелка вниз, начинаем двигаться вниз
+				  if (e.keyCode == 40) {
+				    newPos = {x: 1, y: 0};
+				  }
+				  // Если нажата стрелка влево, начинаем двигаться влево
+				  if (e.keyCode == 37) {
+				    newPos = {x: 0, y: -1};
+				  }
+				  // Если нажата стрелка вправо, начинаем двигаться вправо
+				  if (e.keyCode == 39) {
+				    newPos = {x: 0, y: 1};
+				  }
+				  player.update(newPos);
+				}
+				window.onkeydown = processKey;
+	    	function main() {
+			    clr();
+			    //update();
+			    //render();
+			    requestAnimFrame(main);
+			};
+		main();      
   </script>
 </body>
 </html>
