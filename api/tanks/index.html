@@ -9,6 +9,7 @@
 <body>
   <script>
 	  window.onload = function(){
+		  Xx = 50;
 		window.requestAnimFrame = (function(){
       	return  window.requestAnimationFrame       || 
               window.webkitRequestAnimationFrame || 
@@ -57,7 +58,8 @@
 				window.onkeydown = processKey;
 	    	function main() {
 			    clr();
-			    //update();
+			    ctx.fillRect(Xx,50,50,50);
+			//update();
 			    //render();
 			    requestAnimFrame(main);
 			};
