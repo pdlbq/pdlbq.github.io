@@ -8,6 +8,7 @@
 </head>
 <body>
   <script>
+	  window.onload = function(){
 		window.requestAnimFrame = (function(){
       	return  window.requestAnimationFrame       || 
               window.webkitRequestAnimationFrame || 
@@ -61,6 +62,7 @@
 			    requestAnimFrame(main);
 			};
 		main();      
+		  }
   </script>
 </body>
 </html>
