@@ -35,13 +35,12 @@
 		ctx.fillStyle = 'blueviolet';
         ctx.strokeStyle = 'blueviolet';
 		//var x=0, y=0;
-       var pen = {
-        	x: 400,
-      		y: 400,
+        var pen = {
+        	x: 50,
+      		y: 50,
       		speed: 1
         };
         var x, y;
-        var i = 0;
         canvas.onmousedown = function(p){
         	ctx.moveTo(p.pageX - canvas.offsetLeft, p.pageY - canvas.offsetTop);
        		canvas.onmousemove = function(e){
@@ -50,18 +49,17 @@
             y = e.pageY;
             mx.push(x);
             my.push(y); 
-            
-ctx.drawImage(pap, -100,0,1150,canvas.height);
-            //ctx.drawImage(img, x - canvas.offsetLeft, y - canvas.offsetTop - 150,150,150);
             ctx.lineTo(x - canvas.offsetLeft, y - canvas.offsetTop);
             ctx.moveTo(x - canvas.offsetLeft, y - canvas.offsetTop);
             ctx.stroke();
                   //console.log(mx);      
         	}
+
         }
-        
+        var i = 0;
         canvas.onmouseup = function(){
         	//ctx.moveTo(x - canvas.offsetLeft, y - canvas.offsetTop);
+
           mx.push(-1);
           my.push(-1);
       
@@ -85,40 +83,23 @@ ctx.drawImage(pap, -100,0,1150,canvas.height);
         function go(){
      /*     
        */   
-       
           if(tx[i] == -1){
             i++;
             ctx.moveTo(tx[i] - canvas.offsetLeft, ty[i] - canvas.offsetTop);
+
           }
           else{
-            ctx.clearRect(tx[i-1] - canvas.offsetLeft, ty[i-1] - canvas.offsetTop - 150,150,150);
-          ctx.drawImage(fon, 0,0);
-       ctx.drawImage(pap, -100,0,1150,canvas.height);
             ctx.lineTo(tx[i] - canvas.offsetLeft, ty[i] - canvas.offsetTop);
             ctx.moveTo(tx[i] - canvas.offsetLeft, ty[i] - canvas.offsetTop);
             ctx.stroke();
-             ctx.drawImage(img, tx[i] - canvas.offsetLeft, ty[i] - canvas.offsetTop - 150,150,150);
             i++;
           }
-          
           //if(mx.lenght > i)
             requestAnimFrame(go);
+
         }
         ctx.moveTo(tx[0] - canvas.offsetLeft, ty[0] - canvas.offsetTop);
-var img = new Image();      // Новый объект
- 
-img.src = 'BrowserPreview_tmp.png'; 
-var fon = new Image();
-fon.src = '356626-admin.jpg';
-var pap = new Image();
- pap.onload = function() { // Событие которое будет исполнено в момент когда изображение будет загружено
-    /*
-    Какие-либо действия
-  */
-   go();
-}
-pap.src = 'scroll_old_paper_38.png';
-       
+        go();
 		/*canvas.addEventListener('mousemove', function(e){
                 
                 x = e.pageX;
@@ -133,3 +114,4 @@ pap.src = 'scroll_old_paper_38.png';
 	
 </body>
 </html>
+	
