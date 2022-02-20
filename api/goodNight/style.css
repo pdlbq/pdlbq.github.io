@@ -1,0 +1,53 @@
+body {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+section{
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    background: #111;
+    overflow: hidden;
+}
+
+.text {
+    position: relative;
+    color: rgb(115, 204, 43);
+    margin: 40px;
+    max-width: 800px;
+    user-select: none;
+    font-size: 2em;
+}
+span {
+    position: relative;
+    display: inline-block;
+    cursor: pointer;
+}
+
+.active{
+    animation: smoke 2s linear forwards;
+}
+
+@keyframes smoke
+{
+    0%
+    {
+        opacity: 1;
+        filter: blur(0);
+        transform: translateX(0) translateY(0) rotate(0deg) scale(1);
+    }
+    50%
+    {
+        opacity: 1;
+        pointer-events: none;
+    }
+    100%
+    {
+        opacity: 0;
+        filter: blur(20px);
+        transform: translateX(300px) translateY(-300px) rotate(720deg) scale(4);
+    }
+}
