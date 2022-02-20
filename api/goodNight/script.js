@@ -3,7 +3,7 @@ var WIDTH;
 var HEIGHT;
 var ctx;
 var canvas;
-var x1 = 0, y1 = -90;
+var x1 = 0, y1 = -45;
 var angle = 0;
 
 const text = document.querySelector('.text');
@@ -29,7 +29,7 @@ function test() {
 
 function stop(){
     clearInterval(go);
-    createCanvas(800, 600, "#111");
+    createCanvas(400, 400, "#111");
     ctx.translate(WIDTH/2, HEIGHT/2);
     start();
 }
@@ -86,8 +86,8 @@ function start()
 
 function draw()
 {
-    x = 16*Math.pow(Math.sin(angle),3)*18;
-    y = (13*Math.cos(angle) - 5*Math.cos(2*angle) - 2*Math.cos(3*angle)-Math.cos(4*angle))*18;
+    x = 8*Math.pow(Math.sin(angle),3)*9;
+    y = (13*Math.cos(angle) - 5*Math.cos(2*angle) - 2*Math.cos(3*angle)-Math.cos(4*angle))*9;
     ///console.log((13*Math.cos(0) - 5*Math.cos(2*0) - 2*Math.cos(3*0)-Math.cos(4*0))*18)
     rect(x, -y);
     angle += 0.005;
