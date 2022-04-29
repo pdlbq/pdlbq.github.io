@@ -7,7 +7,6 @@ class Controller {
 
 		this.leftClick = false;
 		this.positionClick;
-		this.positionTouch;
 
 		this.#addKeyboardListeners();
 	}
@@ -61,7 +60,7 @@ class Controller {
 
 		document.addEventListener('touchstart', (event) => {
 			this.leftClick = true;
-			this.positionTouch = {x: event.touches[0].clientX, y: event.touches[0].clientY, x1: event.touches[1].clientX, y1: event.touches[1].clientY};
+			this.positionClick = {x: event.touches[0].clientX, y: event.touches[0].clientY};
 		});
 
 		document.addEventListener('touchend', (event) => {
@@ -73,8 +72,4 @@ class Controller {
 	getPositionClick() {
 		return this.positionClick;
 	}
-	
-	getTouchClick() {
-		return this.positionTouch;
-	{
 }
